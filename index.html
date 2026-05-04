@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 15px; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-size: 12px; color: var(--tg-theme-hint-color); margin-bottom: 4px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; background: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color); }
+        button { width: 100%; padding: 15px; background: #248bcf; color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="input-group">
+        <label>Hourly Rate</label>
+        <input type="number" id="h" placeholder="e.g. 100">
+    </div>
+    <div class="input-group">
+        <label>Consumption</label>
+        <input type="number" id="c" placeholder="e.g. 2000">
+    </div>
+    <div class="input-group">
+        <label>Tips</label>
+        <input type="number" id="t" placeholder="e.g. 50">
+    </div>
+    <div class="input-group">
+        <label>Fine</label>
+        <input type="number" id="f" placeholder="e.g. 0">
+    </div>
+    <div class="input-group">
+        <label>Room Number</label>
+        <input type="text" id="r" placeholder="e.g. 302">
+    </div>
+    <div class="input-group">
+        <label>Your Name</label>
+        <input type="text" id="n" placeholder="e.g. Lisa">
+    </div>
+    <button onclick="submit()">SUBMIT REPORT</button>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        function submit(){
+            let d = [
+                document.getElementById('h').value || 0,
+                document.getElementById('c').value || 0,
+                document.getElementById('t').value || 0,
+                document.getElementById('f').value || 0,
+                document.getElementById('r').value || "N/A",
+                document.getElementById('n').value || "Unknown"
+            ];
+            tg.sendData(d.join(" "));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
