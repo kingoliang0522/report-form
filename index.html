@@ -14,35 +14,44 @@
 </head>
 <body>
     <div class="input-group">
-        <label>Hourly Rate</label>
-        <input type="number" id="h" placeholder="e.g. 100">
+        <label>Hourly Rate (小时费)</label>
+        <input type="number" id="h" placeholder="0">
     </div>
     <div class="input-group">
-        <label>Consumption</label>
-        <input type="number" id="c" placeholder="e.g. 2000">
+        <label>Consumption (客户消费)</label>
+        <input type="number" id="c" placeholder="0">
     </div>
     <div class="input-group">
-        <label>Tips</label>
-        <input type="number" id="t" placeholder="e.g. 50">
+        <label>Tips (小费)</label>
+        <input type="number" id="t" placeholder="0">
     </div>
     <div class="input-group">
-        <label>Fine</label>
-        <input type="number" id="f" placeholder="e.g. 0">
+        <label>Fine (罚款)</label>
+        <input type="number" id="f" placeholder="0">
     </div>
+    <div class="input-group">
+        <label>Room Number (房间号)</label>
+        <input type="text" id="r" placeholder="e.g. 302">
+    </div>
+    
     <button onclick="submit()">SUBMIT REPORT</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
         function submit(){
-            let d = [
-                document.getElementById('h').value || 0,
-                document.getElementById('c').value || 0,
-                document.getElementById('t').value || 0,
-                document.getElementById('f').value || 0,
+            // 获取所有值
+            let h = document.getElementById('h').value || "0";
+            let c = document.getElementById('c').value || "0";
+            let t = document.getElementById('t').value || "0";
+            let f = document.getElementById('f').value || "0";
+            let r = document.getElementById('r').value || "N/A"; // 房间号
+
+            // 按照后端要求的顺序拼接：小时费 消费 小费 罚款 房间号
+            let dataString = h + " " + c + " " + t + " " + f + " " + r;
             
-            ];
-            tg.sendData(d.join(" "));
+            tg.sendData(dataString);
             tg.close();
         }
     </script>
