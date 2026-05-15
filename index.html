@@ -29,10 +29,7 @@
         <label>Fine (罚款)</label>
         <input type="number" id="f" placeholder="0">
     </div>
-    <div class="input-group">
-        <label>Room Number (房间号)</label>
-        <input type="text" id="r" placeholder="e.g. 302">
-    </div>
+    
     
     <button onclick="submit()">SUBMIT REPORT</button>
 
@@ -46,7 +43,7 @@
             let c = document.getElementById('c').value || "0";
             let t = document.getElementById('t').value || "0";
             let f = document.getElementById('f').value || "0";
-            let r = document.getElementById('r').value || "N/A"; // 房间号
+            
 
             // 按照后端要求的顺序拼接：小时费 消费 小费 罚款 房间号
             let dataString = h + " " + c + " " + t + " " + f + " " + r;
