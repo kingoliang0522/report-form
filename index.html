@@ -30,7 +30,6 @@
         <input type="number" id="f" placeholder="0">
     </div>
     
-    
     <button onclick="submit()">SUBMIT REPORT</button>
 
     <script>
@@ -38,18 +37,22 @@
         tg.expand();
 
         function submit(){
-            // 获取所有值
-            let h = document.getElementById('h').value || "0";
-            let c = document.getElementById('c').value || "0";
-            let t = document.getElementById('t').value || "0";
-            let f = document.getElementById('f').value || "0";
-            
+            try {
+                // 获取 4 个现有输入框的值
+                let h = document.getElementById('h').value || "0";
+                let c = document.getElementById('c').value || "0";
+                let t = document.getElementById('t').value || "0";
+                let f = document.getElementById('f').value || "0";
 
-            // 按照后端要求的顺序拼接：小时费 消费 小费 罚款 房间号
-            let dataString = h + " " + c + " " + t + " " + f + " " + r;
-            
-            tg.sendData(dataString);
-            tg.close();
+                // 【修正点】：删掉末尾多余的 + " " + r
+                let dataString = h + " " + c + " " + t + " " + f;
+                
+                tg.sendData(dataString);
+                tg.close();
+            } catch (e) {
+                // 如果还报错，手机上会弹出提示
+                alert("Error: " + e.message);
+            }
         }
     </script>
 </body>
