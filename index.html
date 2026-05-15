@@ -29,14 +29,6 @@
         <label>Fine</label>
         <input type="number" id="f" placeholder="e.g. 0">
     </div>
-    <div class="input-group">
-        <label>Room Number</label>
-        <input type="text" id="r" placeholder="e.g. 302">
-    </div>
-    <div class="input-group">
-        <label>Your Name</label>
-        <input type="text" id="n" placeholder="e.g. Lisa">
-    </div>
     <button onclick="submit()">SUBMIT REPORT</button>
 
     <script>
@@ -48,8 +40,7 @@
                 document.getElementById('c').value || 0,
                 document.getElementById('t').value || 0,
                 document.getElementById('f').value || 0,
-                document.getElementById('r').value || "N/A",
-                document.getElementById('n').value || "Unknown"
+            
             ];
             tg.sendData(d.join(" "));
             tg.close();
