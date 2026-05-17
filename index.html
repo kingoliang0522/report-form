@@ -32,20 +32,21 @@
     
     <button onclick="submit()">SUBMIT REPORT</button>
 
-    <script>
+  <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
         function submit(){
             try {
-                // 强制将空输入转化为数字 0，防止拼接格式断裂
                 let h = parseFloat(document.getElementById('h').value) || 0;
                 let c = parseFloat(document.getElementById('c').value) || 0;
                 let t = parseFloat(document.getElementById('t').value) || 0;
                 let f = parseFloat(document.getElementById('f').value) || 0;
 
-                // 拼装符合你 GAS 脚本切分逻辑的字符串
                 let dataString = h + " " + c + " " + t + " " + f;
+                
+                // 【核心诊断线】：在手机上强制弹窗，让我们看看到底拼出了什么
+                alert("即将发送的数据是: [" + dataString + "]");
                 
                 tg.sendData(dataString);
                 tg.close();
