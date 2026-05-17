@@ -38,13 +38,13 @@
 
         function submit(){
             try {
-                // 【核心修复】：将输入值转换为浮点数，若为空或非法则强制转为 0，确保拼接出的字符串绝对标准
+                // 强制将空输入转化为数字 0，防止拼接格式断裂
                 let h = parseFloat(document.getElementById('h').value) || 0;
                 let c = parseFloat(document.getElementById('c').value) || 0;
                 let t = parseFloat(document.getElementById('t').value) || 0;
                 let f = parseFloat(document.getElementById('f').value) || 0;
 
-                // 严格拼装成满足 GAS 后端验证的格式 (例如: "100 200 50 0")
+                // 拼装符合你 GAS 脚本切分逻辑的字符串
                 let dataString = h + " " + c + " " + t + " " + f;
                 
                 tg.sendData(dataString);
