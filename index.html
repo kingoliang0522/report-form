@@ -5,55 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 15px; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
+        body { font-family: -apple-system, sans-serif; padding: 15px; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; }
+        .tabs { display: flex; border-bottom: 2px solid var(--tg-theme-secondary-bg-color); margin-bottom: 15px; }
+        .tab { flex: 1; text-align: center; padding: 10px 5px; cursor: pointer; font-size: 13px; font-weight: bold; color: var(--tg-theme-hint-color); }
+        .tab.active { color: #248bcf; border-bottom: 3px solid #248bcf; }
+        .page { display: none; }
+        .page.active { display: block; }
         .input-group { margin-bottom: 10px; }
-        label { display: block; font-size: 12px; color: var(--tg-theme-hint-color); margin-bottom: 4px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; background: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color); }
-        button { width: 100%; padding: 15px; background: #248bcf; color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        label { display: block; font-size: 12px; color: var(--tg-theme-hint-color); margin-bottom: 4px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; background: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color); font-size: 15px; }
+        .section-title { font-size: 12px; color: #e67e22; margin: 10px 0 5px 0; font-weight: bold; border-left: 3px solid #e67e22; padding-left: 5px; }
+        button { width: 100%; padding: 14px; background: #248bcf; color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; font-size: 15px; }
+        .hint-box { background: var(--tg-theme-secondary-bg-color); padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; border-left: 4px solid #248bcf; }
     </style>
 </head>
 <body>
-    <div class="input-group">
-        <label>Hourly Rate (小时费)</label>
-        <input type="number" id="h" placeholder="0">
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('reportPage', this)">Money Report</div>
+        <div class="tab" onclick="switchTab('infoPage', this)">📝 信息录入</div>
+        <div class="tab" onclick="switchTab('salaryPage', this)">📅 Salary Day</div>
     </div>
-    <div class="input-group">
-        <label>Consumption (客户消费)</label>
-        <input type="number" id="c" placeholder="0">
+
+    <div id="reportPage" class="page active">
+        <div class="input-group"><label>Hourly Rate (小时费)</label><input type="number" id="h" placeholder="0"></div>
+        <div class="input-group"><label>Consumption (客户消费)</label><input type="number" id="c" placeholder="0"></div>
+        <div class="input-group"><label>Tips (小费)</label><input type="number" id="t" placeholder="0"></div>
+        <div class="input-group"><label>Fine (罚款)</label><input type="number" id="f" placeholder="0"></div>
+        <button id="submitBtn">SUBMIT REPORT</button>
     </div>
-    <div class="input-group">
-        <label>Tips (小费)</label>
-        <input type="number" id="t" placeholder="0">
+
+    <div id="infoPage" class="page">
+        <div class="hint-box">请准确填写您的个人收款信息（USDT与银行卡选填一项或全填，不能全空）</div>
+        <div class="input-group"><label>第一行：护照号码 (Passport No.)</label><input type="text" id="passport" placeholder="请输入护照号"></div>
+        <div class="input-group"><label>第二行：姓名 (Full Name)</label><input type="text" id="fullname" placeholder="请输入真实姓名"></div>
+        
+        <div class="section-title">第三行：加密货币收款</div>
+        <div class="input-group"><label>USDT-TRC20 地址</label><input type="text" id="usdt" placeholder="T开头的TRC20地址 (选填)"></div>
+        
+        <div class="section-title">第四行：传统银行收款 (选填)</div>
+        <div class="input-group"><label>银行卡号 (Bank Card No.)</label><input type="text" id="bank_no" placeholder="银行卡号"></div>
+        <div class="input-group"><label>开户行详细地址 (Bank Address)</label><input type="text" id="bank_addr" placeholder="例如：支行名称及城市"></div>
+        <div class="input-group"><label>SWIFT CODE</label><input type="text" id="swift" placeholder="国际电汇代码"></div>
+        
+        <button id="saveInfoBtn" style="background: #2ecc71;">提交个人收款信息</button>
     </div>
-    <div class="input-group">
-        <label>Fine (罚款)</label>
-        <input type="number" id="f" placeholder="0">
+
+    <div id="salaryPage" class="page">
+        <div class="hint-box">薪资结算中心：满足15天账期后，点击下方按钮发起发薪申请。</div>
+        <button id="applySalaryBtn" style="background: #e67e22; height: 60px; font-size: 16px;">LOADING SALARY STATUS...</button>
     </div>
-    
-    <button id="submitBtn">SUBMIT REPORT</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 2. 核心修改：使用严格的事件监听器绑定，绕过所有浏览器的命名冲突风险
-        document.getElementById('submitBtn').addEventListener('click', function() {
-            try {
-                let h = parseFloat(document.getElementById('h').value) || 0;
-                let c = parseFloat(document.getElementById('c').value) || 0;
-                let t = parseFloat(document.getElementById('t').value) || 0;
-                let f = parseFloat(document.getElementById('f').value) || 0;
+        // 接收来自后台动态计算的倒计时数据
+        let urlParams = new URLSearchParams(window.location.search);
+        let daysLeft = urlParams.get('daysLeft'); 
+        let salaryBtn = document.getElementById('applySalaryBtn');
 
-                let dataString = h + " " + c + " " + t + " " + f;
-                
-                // 保留强制弹窗诊断线
-                alert("即将发送的数据是: " + dataString);
-                
-                tg.sendData(dataString);
-                tg.close();
-            } catch (e) {
-                alert("Error: " + e.message);
+        // 初始化 Salary Day 按钮状态
+        if (daysLeft === "none" || daysLeft === null) {
+            salaryBtn.innerText = "🔒 请先提交工作报表（首笔入账后开启15天倒计时）";
+            salaryBtn.disabled = true;
+            salaryBtn.style.background = "#7f8c8d";
+        } else {
+            let days = parseInt(daysLeft);
+            if (days > 0) {
+                salaryBtn.innerText = "⏳ 剩余 " + days + " 天可申请提现";
+                salaryBtn.disabled = true;
+                salaryBtn.style.background = "#7f8c8d";
+            } else {
+                salaryBtn.innerText = "🚀 申请发放薪资 (Apply Salary)";
+                salaryBtn.disabled = false;
             }
+        }
+
+        function switchTab(pageId, tabEl) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            tabEl.classList.add('active');
+        }
+
+        // 1. 提交报表
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            let h = parseFloat(document.getElementById('h').value) || 0;
+            let c = parseFloat(document.getElementById('c').value) || 0;
+            let t = parseFloat(document.getElementById('t').value) || 0;
+            let f = parseFloat(document.getElementById('f').value) || 0;
+            tg.sendData("report|" + h + " " + c + " " + t + " " + f);
+            tg.close();
+        });
+
+        // 2. 提交个人收款信息（包含核心非空校验）
+        document.getElementById('saveInfoBtn').addEventListener('click', function() {
+            let passport = document.getElementById('passport').value.trim();
+            let fullname = document.getElementById('fullname').value.trim();
+            let usdt = document.getElementById('usdt').value.trim();
+            let bankNo = document.getElementById('bank_no').value.trim();
+            let bankAddr = document.getElementById('bank_addr').value.trim();
+            let swift = document.getElementById('swift').value.trim();
+
+            if (!passport || !fullname) {
+                alert("护照号码和姓名不能为空！");
+                return;
+            }
+            let hasBank = bankNo || bankAddr || swift;
+            if (!usdt && !hasBank) {
+                alert("错误：USDT地址 与 银行卡信息 不能两个都为空！");
+                return;
+            }
+
+            let infoString = "info|" + passport + "^" + fullname + "^" + usdt + "^" + bankNo + "^" + bankAddr + "^" + swift;
+            tg.sendData(infoString);
+            tg.close();
+        });
+
+        // 3. 点击发薪申请
+        salaryBtn.addEventListener('click', function() {
+            tg.sendData("apply_salary_trigger|now");
+            tg.close();
         });
     </script>
 </body>
