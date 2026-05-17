@@ -1,112 +1,387 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 
 body{
-font-family:-apple-system,sans-serif;
-padding:15px;
-margin:0;
-background:#ffffff;
+    font-family:-apple-system,sans-serif;
+    padding:15px;
+    background:var(--tg-theme-bg-color);
+    color:var(--tg-theme-text-color);
+    margin:0;
+}
+
+.tabs{
+    display:flex;
+    border-bottom:2px solid #ddd;
+    margin-bottom:15px;
+}
+
+.tab{
+    flex:1;
+    text-align:center;
+    padding:12px 5px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:bold;
+    color:#777;
+}
+
+.tab.active{
+    color:#248bcf;
+    border-bottom:3px solid #248bcf;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
 }
 
 .input-group{
-margin-bottom:12px;
+    margin-bottom:12px;
+}
+
+label{
+    display:block;
+    font-size:12px;
+    margin-bottom:5px;
+    font-weight:bold;
 }
 
 input{
-width:100%;
-padding:12px;
-box-sizing:border-box;
-border-radius:8px;
-border:1px solid #ccc;
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
+    font-size:15px;
 }
 
 button{
-width:100%;
-padding:14px;
-background:#248bcf;
-color:white;
-border:none;
-border-radius:8px;
-font-weight:bold;
-margin-top:10px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-weight:bold;
+    font-size:15px;
+    margin-top:10px;
+}
+
+.hint-box{
+    background:#f4f4f4;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:15px;
+    font-size:13px;
+}
+
+.section-title{
+    margin:15px 0 8px 0;
+    font-size:13px;
+    font-weight:bold;
+    color:#e67e22;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h2>Money Report</h2>
+<div class="tabs">
 
-<div class="input-group">
-<input type="number" id="h" placeholder="Hourly">
+    <div
+    class="tab active"
+    onclick="switchTab('reportPage',this)">
+        Money Report
+    </div>
+
+    <div
+    class="tab"
+    onclick="switchTab('walletPage',this)">
+        Wallet Information
+    </div>
+
 </div>
 
-<div class="input-group">
-<input type="number" id="c" placeholder="Consumption">
+<!-- REPORT PAGE -->
+
+<div
+id="reportPage"
+class="page active">
+
+    <div class="input-group">
+        <label>Hourly Rate</label>
+        <input
+        type="number"
+        id="h"
+        placeholder="0">
+    </div>
+
+    <div class="input-group">
+        <label>Consumption</label>
+        <input
+        type="number"
+        id="c"
+        placeholder="0">
+    </div>
+
+    <div class="input-group">
+        <label>Tips</label>
+        <input
+        type="number"
+        id="t"
+        placeholder="0">
+    </div>
+
+    <div class="input-group">
+        <label>Fine</label>
+        <input
+        type="number"
+        id="f"
+        placeholder="0">
+    </div>
+
+    <button
+    id="submitBtn"
+    style="background:#248bcf;">
+        SUBMIT REPORT
+    </button>
+
 </div>
 
-<div class="input-group">
-<input type="number" id="t" placeholder="Tips">
-</div>
+<!-- WALLET PAGE -->
 
-<div class="input-group">
-<input type="number" id="f" placeholder="Fine">
-</div>
+<div
+id="walletPage"
+class="page">
 
-<button id="submitBtn">
-SUBMIT REPORT
-</button>
+    <div class="hint-box">
+        钱包地址 与 银行信息
+        至少填写一种
+    </div>
+
+    <div class="input-group">
+        <label>真实姓名</label>
+        <input
+        type="text"
+        id="realname"
+        placeholder="Real Name">
+    </div>
+
+    <div class="input-group">
+        <label>护照号</label>
+        <input
+        type="text"
+        id="passport"
+        placeholder="Passport Number">
+    </div>
+
+    <div class="section-title">
+        TRC-20 Wallet
+    </div>
+
+    <div class="input-group">
+        <label>TRC-20 钱包地址</label>
+        <input
+        type="text"
+        id="wallet"
+        placeholder="T开头地址">
+    </div>
+
+    <div class="section-title">
+        Bank Information
+    </div>
+
+    <div class="input-group">
+        <label>银行卡号</label>
+        <input
+        type="text"
+        id="bankno"
+        placeholder="Bank Number">
+    </div>
+
+    <div class="input-group">
+        <label>银行地址</label>
+        <input
+        type="text"
+        id="bankaddr"
+        placeholder="Bank Address">
+    </div>
+
+    <div class="input-group">
+        <label>SWIFT CODE</label>
+        <input
+        type="text"
+        id="swift"
+        placeholder="SWIFT CODE">
+    </div>
+
+    <button
+    id="walletBtn"
+    style="background:#27ae60;">
+
+        SAVE WALLET INFO
+
+    </button>
+
+</div>
 
 <script>
 
-let tg = window.Telegram.WebApp;
+let tg =
+window.Telegram.WebApp;
 
 tg.expand();
+
+function switchTab(pageId,tabEl){
+
+    document
+    .querySelectorAll('.page')
+    .forEach(p=>p.classList.remove('active'));
+
+    document
+    .querySelectorAll('.tab')
+    .forEach(t=>t.classList.remove('active'));
+
+    document
+    .getElementById(pageId)
+    .classList.add('active');
+
+    tabEl.classList.add('active');
+}
 
 document
 .getElementById('submitBtn')
 .addEventListener('click',function(){
 
-let h =
-parseFloat(
-document.getElementById('h').value
-) || 0;
+    let h =
+    parseFloat(
+    document
+    .getElementById('h')
+    .value) || 0;
 
-let c =
-parseFloat(
-document.getElementById('c').value
-) || 0;
+    let c =
+    parseFloat(
+    document
+    .getElementById('c')
+    .value) || 0;
 
-let t =
-parseFloat(
-document.getElementById('t').value
-) || 0;
+    let t =
+    parseFloat(
+    document
+    .getElementById('t')
+    .value) || 0;
 
-let f =
-parseFloat(
-document.getElementById('f').value
-) || 0;
+    let f =
+    parseFloat(
+    document
+    .getElementById('f')
+    .value) || 0;
 
-tg.sendData(JSON.stringify({
+    let payload = {
 
-type:"report",
+        type:"report",
 
-h:h,
-c:c,
-t:t,
-f:f
+        h:h,
+        c:c,
+        t:t,
+        f:f
+    };
 
-}));
+    tg.sendData(
+        JSON.stringify(payload)
+    );
 
-tg.close();
+    tg.close();
+});
 
+document
+.getElementById('walletBtn')
+.addEventListener('click',function(){
+
+    let realname =
+    document
+    .getElementById('realname')
+    .value.trim();
+
+    let passport =
+    document
+    .getElementById('passport')
+    .value.trim();
+
+    let wallet =
+    document
+    .getElementById('wallet')
+    .value.trim();
+
+    let bankno =
+    document
+    .getElementById('bankno')
+    .value.trim();
+
+    let bankaddr =
+    document
+    .getElementById('bankaddr')
+    .value.trim();
+
+    let swift =
+    document
+    .getElementById('swift')
+    .value.trim();
+
+    if(!realname || !passport){
+
+        alert("真实姓名和护照号不能为空");
+
+        return;
+    }
+
+    let hasBank =
+    bankno || bankaddr || swift;
+
+    if(!wallet && !hasBank){
+
+        alert("钱包地址和银行信息必须填写一种");
+
+        return;
+    }
+
+    let payload = {
+
+        type:"wallet",
+
+        realname:realname,
+
+        passport:passport,
+
+        wallet:wallet,
+
+        bankno:bankno,
+
+        bankaddr:bankaddr,
+
+        swift:swift
+    };
+
+    tg.sendData(
+        JSON.stringify(payload)
+    );
+
+    tg.close();
 });
 
 </script>
