@@ -1,237 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta charset="utf-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 
 body{
-    font-family:-apple-system,sans-serif;
-    padding:15px;
-    background:#ffffff;
-    margin:0;
-}
-
-.tabs{
-    display:flex;
-    border-bottom:2px solid #ddd;
-    margin-bottom:15px;
-}
-
-.tab{
-    flex:1;
-    text-align:center;
-    padding:12px 5px;
-    cursor:pointer;
-    font-size:13px;
-    font-weight:bold;
-    color:#777;
-}
-
-.tab.active{
-    color:#248bcf;
-    border-bottom:3px solid #248bcf;
-}
-
-.page{
-    display:none;
-}
-
-.page.active{
-    display:block;
-}
-
-.input-group{
-    margin-bottom:12px;
-}
-
-label{
-    display:block;
-    font-size:12px;
-    margin-bottom:5px;
-    font-weight:bold;
+font-family:sans-serif;
+padding:20px;
 }
 
 input{
-    width:100%;
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    box-sizing:border-box;
-    font-size:15px;
+width:100%;
+padding:12px;
+margin-bottom:10px;
+font-size:16px;
 }
 
 button{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:8px;
-    color:white;
-    font-weight:bold;
-    font-size:15px;
-    margin-top:10px;
-}
-
-.hint-box{
-    background:#f4f4f4;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:15px;
-    font-size:13px;
-}
-
-.section-title{
-    margin:15px 0 8px 0;
-    font-size:13px;
-    font-weight:bold;
-    color:#e67e22;
+width:100%;
+padding:15px;
+background:#248bcf;
+color:white;
+border:none;
+font-size:18px;
+border-radius:10px;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div class="tabs">
+<h2>Money Report</h2>
 
-    <div
-    class="tab active"
-    onclick="switchTab('reportPage',this)">
-        Money Report
-    </div>
+<input id="h" type="number" placeholder="Hours">
 
-    <div
-    class="tab"
-    onclick="switchTab('walletPage',this)">
-        Wallet Information
-    </div>
+<input id="c" type="number" placeholder="Consumption">
 
-</div>
+<input id="t" type="number" placeholder="Tips">
 
-<!-- REPORT -->
+<input id="f" type="number" placeholder="Fine">
 
-<div
-id="reportPage"
-class="page active">
-
-    <div class="input-group">
-        <label>Hourly Rate</label>
-        <input
-        type="number"
-        id="h"
-        placeholder="0">
-    </div>
-
-    <div class="input-group">
-        <label>Consumption</label>
-        <input
-        type="number"
-        id="c"
-        placeholder="0">
-    </div>
-
-    <div class="input-group">
-        <label>Tips</label>
-        <input
-        type="number"
-        id="t"
-        placeholder="0">
-    </div>
-
-    <div class="input-group">
-        <label>Fine</label>
-        <input
-        type="number"
-        id="f"
-        placeholder="0">
-    </div>
-
-    <button
-    id="submitBtn"
-    style="background:#248bcf;">
-        SUBMIT REPORT
-    </button>
-
-</div>
-
-<!-- WALLET -->
-
-<div
-id="walletPage"
-class="page">
-
-    <div class="hint-box">
-        Wallet address OR bank information
-        must be filled
-    </div>
-
-    <div class="input-group">
-        <label>Real Name</label>
-        <input
-        type="text"
-        id="realname">
-    </div>
-
-    <div class="input-group">
-        <label>Passport Number</label>
-        <input
-        type="text"
-        id="passport">
-    </div>
-
-    <div class="section-title">
-        TRC-20 Wallet
-    </div>
-
-    <div class="input-group">
-        <label>Wallet Address</label>
-        <input
-        type="text"
-        id="wallet">
-    </div>
-
-    <div class="section-title">
-        Bank Information
-    </div>
-
-    <div class="input-group">
-        <label>Bank Account</label>
-        <input
-        type="text"
-        id="bankno">
-    </div>
-
-    <div class="input-group">
-        <label>Bank Address</label>
-        <input
-        type="text"
-        id="bankaddr">
-    </div>
-
-    <div class="input-group">
-        <label>SWIFT CODE</label>
-        <input
-        type="text"
-        id="swift">
-    </div>
-
-    <button
-    id="walletBtn"
-    style="background:#27ae60;">
-
-        SAVE WALLET INFO
-
-    </button>
-
-</div>
+<button onclick="submitData()">
+SUBMIT
+</button>
 
 <script>
 
@@ -240,130 +55,46 @@ window.Telegram.WebApp;
 
 tg.expand();
 
-function switchTab(pageId,tabEl){
+function submitData(){
 
-    document
-    .querySelectorAll('.page')
-    .forEach(p=>p.classList.remove('active'));
+let h =
+document
+.getElementById("h")
+.value || 0;
 
-    document
-    .querySelectorAll('.tab')
-    .forEach(t=>t.classList.remove('active'));
+let c =
+document
+.getElementById("c")
+.value || 0;
 
-    document
-    .getElementById(pageId)
-    .classList.add('active');
+let t =
+document
+.getElementById("t")
+.value || 0;
 
-    tabEl.classList.add('active');
+let f =
+document
+.getElementById("f")
+.value || 0;
+
+tg.sendData(
+JSON.stringify({
+
+type:"report",
+
+h:h,
+
+c:c,
+
+t:t,
+
+f:f
+
+})
+);
+
+tg.close();
 }
-
-document
-.getElementById('submitBtn')
-.addEventListener('click',function(){
-
-    let payload = {
-
-        type:"report",
-
-        h:
-        parseFloat(
-        document
-        .getElementById('h')
-        .value) || 0,
-
-        c:
-        parseFloat(
-        document
-        .getElementById('c')
-        .value) || 0,
-
-        t:
-        parseFloat(
-        document
-        .getElementById('t')
-        .value) || 0,
-
-        f:
-        parseFloat(
-        document
-        .getElementById('f')
-        .value) || 0
-    };
-
-    tg.sendData(
-        JSON.stringify(payload)
-    );
-
-    tg.close();
-});
-
-document
-.getElementById('walletBtn')
-.addEventListener('click',function(){
-
-    let payload = {
-
-        type:"wallet",
-
-        realname:
-        document
-        .getElementById('realname')
-        .value.trim(),
-
-        passport:
-        document
-        .getElementById('passport')
-        .value.trim(),
-
-        wallet:
-        document
-        .getElementById('wallet')
-        .value.trim(),
-
-        bankno:
-        document
-        .getElementById('bankno')
-        .value.trim(),
-
-        bankaddr:
-        document
-        .getElementById('bankaddr')
-        .value.trim(),
-
-        swift:
-        document
-        .getElementById('swift')
-        .value.trim()
-    };
-
-    if(
-        !payload.realname ||
-        !payload.passport
-    ){
-        alert(
-        "Name and passport required"
-        );
-        return;
-    }
-
-    if(
-        !payload.wallet &&
-        !payload.bankno &&
-        !payload.bankaddr &&
-        !payload.swift
-    ){
-        alert(
-        "Wallet OR bank required"
-        );
-        return;
-    }
-
-    tg.sendData(
-        JSON.stringify(payload)
-    );
-
-    tg.close();
-});
 
 </script>
 
