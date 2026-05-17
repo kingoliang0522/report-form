@@ -15,8 +15,7 @@ content="width=device-width, initial-scale=1.0">
 body{
     font-family:-apple-system,sans-serif;
     padding:15px;
-    background:var(--tg-theme-bg-color);
-    color:var(--tg-theme-text-color);
+    background:#ffffff;
     margin:0;
 }
 
@@ -117,7 +116,7 @@ button{
 
 </div>
 
-<!-- REPORT PAGE -->
+<!-- REPORT -->
 
 <div
 id="reportPage"
@@ -163,31 +162,29 @@ class="page active">
 
 </div>
 
-<!-- WALLET PAGE -->
+<!-- WALLET -->
 
 <div
 id="walletPage"
 class="page">
 
     <div class="hint-box">
-        钱包地址 与 银行信息
-        至少填写一种
+        Wallet address OR bank information
+        must be filled
     </div>
 
     <div class="input-group">
-        <label>真实姓名</label>
+        <label>Real Name</label>
         <input
         type="text"
-        id="realname"
-        placeholder="Real Name">
+        id="realname">
     </div>
 
     <div class="input-group">
-        <label>护照号</label>
+        <label>Passport Number</label>
         <input
         type="text"
-        id="passport"
-        placeholder="Passport Number">
+        id="passport">
     </div>
 
     <div class="section-title">
@@ -195,11 +192,10 @@ class="page">
     </div>
 
     <div class="input-group">
-        <label>TRC-20 钱包地址</label>
+        <label>Wallet Address</label>
         <input
         type="text"
-        id="wallet"
-        placeholder="T开头地址">
+        id="wallet">
     </div>
 
     <div class="section-title">
@@ -207,27 +203,24 @@ class="page">
     </div>
 
     <div class="input-group">
-        <label>银行卡号</label>
+        <label>Bank Account</label>
         <input
         type="text"
-        id="bankno"
-        placeholder="Bank Number">
+        id="bankno">
     </div>
 
     <div class="input-group">
-        <label>银行地址</label>
+        <label>Bank Address</label>
         <input
         type="text"
-        id="bankaddr"
-        placeholder="Bank Address">
+        id="bankaddr">
     </div>
 
     <div class="input-group">
         <label>SWIFT CODE</label>
         <input
         type="text"
-        id="swift"
-        placeholder="SWIFT CODE">
+        id="swift">
     </div>
 
     <button
@@ -268,38 +261,33 @@ document
 .getElementById('submitBtn')
 .addEventListener('click',function(){
 
-    let h =
-    parseFloat(
-    document
-    .getElementById('h')
-    .value) || 0;
-
-    let c =
-    parseFloat(
-    document
-    .getElementById('c')
-    .value) || 0;
-
-    let t =
-    parseFloat(
-    document
-    .getElementById('t')
-    .value) || 0;
-
-    let f =
-    parseFloat(
-    document
-    .getElementById('f')
-    .value) || 0;
-
     let payload = {
 
         type:"report",
 
-        h:h,
-        c:c,
-        t:t,
-        f:f
+        h:
+        parseFloat(
+        document
+        .getElementById('h')
+        .value) || 0,
+
+        c:
+        parseFloat(
+        document
+        .getElementById('c')
+        .value) || 0,
+
+        t:
+        parseFloat(
+        document
+        .getElementById('t')
+        .value) || 0,
+
+        f:
+        parseFloat(
+        document
+        .getElementById('f')
+        .value) || 0
     };
 
     tg.sendData(
@@ -313,69 +301,62 @@ document
 .getElementById('walletBtn')
 .addEventListener('click',function(){
 
-    let realname =
-    document
-    .getElementById('realname')
-    .value.trim();
-
-    let passport =
-    document
-    .getElementById('passport')
-    .value.trim();
-
-    let wallet =
-    document
-    .getElementById('wallet')
-    .value.trim();
-
-    let bankno =
-    document
-    .getElementById('bankno')
-    .value.trim();
-
-    let bankaddr =
-    document
-    .getElementById('bankaddr')
-    .value.trim();
-
-    let swift =
-    document
-    .getElementById('swift')
-    .value.trim();
-
-    if(!realname || !passport){
-
-        alert("真实姓名和护照号不能为空");
-
-        return;
-    }
-
-    let hasBank =
-    bankno || bankaddr || swift;
-
-    if(!wallet && !hasBank){
-
-        alert("钱包地址和银行信息必须填写一种");
-
-        return;
-    }
-
     let payload = {
 
         type:"wallet",
 
-        realname:realname,
+        realname:
+        document
+        .getElementById('realname')
+        .value.trim(),
 
-        passport:passport,
+        passport:
+        document
+        .getElementById('passport')
+        .value.trim(),
 
-        wallet:wallet,
+        wallet:
+        document
+        .getElementById('wallet')
+        .value.trim(),
 
-        bankno:bankno,
+        bankno:
+        document
+        .getElementById('bankno')
+        .value.trim(),
 
-        bankaddr:bankaddr,
+        bankaddr:
+        document
+        .getElementById('bankaddr')
+        .value.trim(),
 
-        swift:swift
+        swift:
+        document
+        .getElementById('swift')
+        .value.trim()
     };
+
+    if(
+        !payload.realname ||
+        !payload.passport
+    ){
+        alert(
+        "Name and passport required"
+        );
+        return;
+    }
+
+    if(
+        !payload.wallet &&
+        !payload.bankno &&
+        !payload.bankaddr &&
+        !payload.swift
+    ){
+        alert(
+        "Wallet OR bank required"
+        );
+        return;
+    }
 
     tg.sendData(
         JSON.stringify(payload)
