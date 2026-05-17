@@ -38,19 +38,18 @@
 
         function submit(){
             try {
-                // 获取 4 个现有输入框的值
-                let h = document.getElementById('h').value || "0";
-                let c = document.getElementById('c').value || "0";
-                let t = document.getElementById('t').value || "0";
-                let f = document.getElementById('f').value || "0";
+                // 【核心修复】：将输入值转换为浮点数，若为空或非法则强制转为 0，确保拼接出的字符串绝对标准
+                let h = parseFloat(document.getElementById('h').value) || 0;
+                let c = parseFloat(document.getElementById('c').value) || 0;
+                let t = parseFloat(document.getElementById('t').value) || 0;
+                let f = parseFloat(document.getElementById('f').value) || 0;
 
-                // 【修正点】：删掉末尾多余的 + " " + r
+                // 严格拼装成满足 GAS 后端验证的格式 (例如: "100 200 50 0")
                 let dataString = h + " " + c + " " + t + " " + f;
                 
                 tg.sendData(dataString);
                 tg.close();
             } catch (e) {
-                // 如果还报错，手机上会弹出提示
                 alert("Error: " + e.message);
             }
         }
