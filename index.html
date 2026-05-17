@@ -30,13 +30,14 @@
         <input type="number" id="f" placeholder="0">
     </div>
     
-    <button onclick="submit()">SUBMIT REPORT</button>
+    <button id="submitBtn">SUBMIT REPORT</button>
 
-  <script>
+    <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        function submit(){
+        // 2. 核心修改：使用严格的事件监听器绑定，绕过所有浏览器的命名冲突风险
+        document.getElementById('submitBtn').addEventListener('click', function() {
             try {
                 let h = parseFloat(document.getElementById('h').value) || 0;
                 let c = parseFloat(document.getElementById('c').value) || 0;
@@ -45,7 +46,7 @@
 
                 let dataString = h + " " + c + " " + t + " " + f;
                 
-                // 【核心诊断线】：在手机上强制弹窗，让我们看看到底拼出了什么
+                // 保留强制弹窗诊断线
                 alert("即将发送的数据是: [" + dataString + "]");
                 
                 tg.sendData(dataString);
@@ -53,8 +54,7 @@
             } catch (e) {
                 alert("Error: " + e.message);
             }
-        }
+        });
     </script>
 </body>
 </html>
-
